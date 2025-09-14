@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUNY Niagara Petitions</title>
+  <!-- Tailwind (utility classes only) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #005587;           /* SUNY Niagara Blue */
+      --blue-r: 0; --blue-g: 85; --blue-b: 135;
+      --gold: #f0e253;           /* Gold */
+      --gold-r: 240; --gold-g: 226; --gold-b: 83;
+      --ltblue: #8abadc;         /* Light blue */
+      --lt-r: 138; --lt-g: 186; --lt-b: 220;
+      --ink: #0b2239;            /* Dark ink */
+      --ink-r: 11; --ink-g: 34; --ink-b: 57;
+    }
+
+    html, body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial; background: #f8fafc; color: var(--ink); }
+    .container-narrow { max-width: 1080px; }
+
+    /* Cards & Inputs */
+    .card { background:#fff; border-radius:1rem; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18); box-shadow:0 1px 6px rgba(0,0,0,.04); }
+    .input { width:100%; border-radius:0.75rem; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .22); padding:0.65rem 0.85rem; outline:0; background:#fff; }
+    .input:focus { outline:2px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .30); }
+    .label { font-size:.875rem; font-weight:600; color:var(--ink); }
+
+    /* Buttons */
+    .btn { display:inline-flex; align-items:center; justify-content:center; border-radius:0.75rem; padding:0.5rem 1rem; font-size:.875rem; font-weight:600; transition:.15s; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .20); color:var(--ink); background:#fff; }
+    .btn:hover { border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .35); transform:translateY(-1px); }
+    .btn-primary { color:#fff; background:var(--blue); border-color:var(--blue); }
+    .btn-primary:hover { filter:brightness(.95); }
+    .btn-ghost { background:transparent; }
+
+    /* Badges/Chips */
+    .badge { display:inline-flex; align-items:center; gap:.25rem; border-radius:999px; padding:.25rem .75rem; font-size:.75rem; font-weight:600; background: rgba(var(--lt-r), var(--lt-g), var(--lt-b), .35); color: var(--ink); }
+    .chip { display:inline-flex; align-items:center; gap:.5rem; padding:.45rem .9rem; border-radius:999px; font-size:.875rem; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18); cursor:pointer; background:#fff; }
+    .chip.is-active { background: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .10); border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .35); }
+
+    /* Nav */
+    .navlink { display:inline-flex; align-items:center; gap:.5rem; border-radius:0.75rem; padding:.5rem .75rem; font-size:.9rem; font-weight:600; color:var(--ink); }
+    .navlink:hover { background: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .12); }
+    .nav-active { background: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .12) !important; }
+
+    /* Hero */
+    .hero { background:#fff; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .20); border-radius:1rem; padding:2rem; }
+    .pill { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .6rem; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.02em; background: rgba(var(--lt-r), var(--lt-g), var(--lt-b), .25); color: var(--ink); }
+
+    .hidden { display:none !important; }
+
+    /* Admin table */
+    .table { width:100%; border-collapse: collapse; }
+    .table th, .table td { padding:.6rem .5rem; border-bottom:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18); text-align:left; }
+    .table th { font-weight:700; font-size:.8rem; text-transform:uppercase; letter-spacing:.02em; opacity:.75; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.75rem; background:rgba(0,0,0,.07); padding:.1rem .35rem; border-radius:.35rem; }
+
+    /* Modals */
+    .backdrop { position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; padding:1rem; }
+    .modal { width:100%; max-width:420px; background:#fff; border:1px solid rgba(var(--blue-r), var(--blue-g), var(--blue-b), .2); border-radius:1rem; padding:1rem; box-shadow:0 10px 30px rgba(0,0,0,.15); }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 border-b" style="border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .20)">
+    <div class="mx-auto container-narrow px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-2xl grid place-items-center text-sm font-bold text-white" style="background:var(--blue)">SGA</div>
+        <div>
+          <h1 class="text-lg font-extrabold leading-tight">SUNY Niagara Petitions</h1>
+          <p class="text-xs opacity-75 -mt-0.5">Make your mark. Get campus responses at 50 signatures.</p>
+        </div>
+      </div>
+      <nav class="flex items-center gap-2">
+        <a href="#/" data-nav="home" class="navlink">Home</a>
+        <a href="#/browse" data-nav="browse" class="navlink">Browse</a>
+        <a href="#/create" data-nav="create" class="navlink btn btn-primary">Start a petition</a>
+        <a href="#/admin" data-nav="admin" class="navlink">Admin</a>
+        <button id="btn-user" class="navlink">Sign in</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto container-narrow px-4 py-6 space-y-6">
+    <div id="alert" class="hidden rounded-xl border px-4 py-3 text-sm" style="border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .30); background: rgba(var(--lt-r), var(--lt-g), var(--lt-b), .18)"></div>
+
+    <!-- Home (PawPrints-style) -->
+    <section id="view-home" class="space-y-6">
+      <div class="hero">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-3xl md:text-4xl font-extrabold">SUNY Niagara Petitions</h2>
+            <p class="mt-1 text-sm opacity-80">Create and sign student petitions. At <strong>50 signatures</strong>, SGA will request an official response.</p>
+            <div class="mt-2 text-xs font-semibold uppercase tracking-wide" style="color:var(--blue)">ThunderWolves 🐺⚡</div>
+          </div>
+          <a href="#/create" class="btn btn-primary">Create a petition</a>
+        </div>
+        <div class="mt-4">
+          <input id="home-search" class="input" placeholder="Search petitions..." />
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2" id="home-chips">
+          <button class="chip is-active" data-cat="">All</button>
+          <button class="chip" data-cat="Academics">Academics</button>
+          <button class="chip" data-cat="Student Life">Student Life</button>
+          <button class="chip" data-cat="Facilities">Facilities</button>
+          <button class="chip" data-cat="Policy">Policy</button>
+          <button class="chip" data-cat="Dining">Dining</button>
+          <button class="chip" data-cat="Parking">Parking</button>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2" id="home-status">
+          <button class="chip is-active" data-status="active">Open</button>
+          <button class="chip" data-status="archived">Archived</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <div id="home-count" class="text-sm opacity-80">0 results</div>
+        <div class="flex items-center gap-2">
+          <select id="home-sort" class="input" style="max-width: 220px;">
+            <option value="trending">Sort: Trending</option>
+            <option value="newest">Sort: Newest</option>
+            <option value="signatures">Sort: Most signatures</option>
+          </select>
+          <label class="flex items-center gap-1 text-xs opacity-80"><input id="toggle-featured" type="checkbox" class="mr-1">Show featured first</label>
+        </div>
+      </div>
+
+      <div id="home-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+
+    <!-- Browse -->
+    <section id="view-browse" class="hidden space-y-4">
+      <div class="card p-4">
+        <div class="grid gap-3 md:grid-cols-4">
+          <div class="md:col-span-2 flex items-center gap-2">
+            <input id="search" class="input" placeholder="Search petitions..." />
+          </div>
+          <select id="filter-category" class="input">
+            <option value="">All categories</option>
+            <option>Academics</option>
+            <option>Student Life</option>
+            <option>Facilities</option>
+            <option>Policy</option>
+            <option>Dining</option>
+            <option>Parking</option>
+          </select>
+          <select id="sort" class="input">
+            <option value="trending">Sort: Trending</option>
+            <option value="newest">Sort: Newest</option>
+            <option value="signatures">Sort: Most signatures</option>
+          </select>
+        </div>
+      </div>
+      <div id="browse-list" class="grid gap-4 md:grid-cols-2"></div>
+
+      <div class="flex gap-2">
+        <button id="export" class="btn">Export data</button>
+        <label class="btn btn-ghost cursor-pointer">Import data
+          <input id="import" type="file" accept="application/json" class="hidden" />
+        </label>
+        <button id="seed" class="btn">Load demo data</button>
+        <button id="clear" class="btn text-red-600 border-red-300 hover:border-red-400" title="Remove ALL petitions">Clear all</button>
+      </div>
+    </section>
+
+    <!-- Create -->
+    <section id="view-create" class="hidden">
+      <div class="card p-6">
+        <h2 class="text-xl font-extrabold mb-4">Start a petition</h2>
+        <form id="create-form" class="grid gap-4">
+          <div>
+            <label class="label">Title</label>
+            <input id="title" class="input" placeholder="Example: Extend library hours during finals" required />
+          </div>
+          <div>
+            <label class="label">Category</label>
+            <select id="category" class="input" required>
+              <option value="">Choose one</option>
+              <option>Academics</option>
+              <option>Student Life</option>
+              <option>Facilities</option>
+              <option>Policy</option>
+              <option>Dining</option>
+              <option>Parking</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Goal (# of signatures)</label>
+            <input id="goal" type="number" min="1" step="1" class="input" placeholder="50" required />
+          </div>
+          <div>
+            <label class="label">Description</label>
+            <textarea id="description" class="input" rows="6" placeholder="What do you want to change and why does it matter?" required></textarea>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-primary" type="submit">Create petition</button>
+            <a href="#/browse" class="btn">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Petition Detail -->
+    <section id="view-detail" class="hidden"></section>
+
+    <!-- Admin Panel -->
+    <section id="view-admin" class="hidden space-y-4">
+      <div class="card p-6">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-extrabold">Admin Panel</h2>
+            <p class="text-sm opacity-75">Restricted to SGA & Advisor. Use passcodes to enter.</p>
+          </div>
+          <div class="flex gap-2">
+            <span id="role-chip" class="pill">Role: guest</span>
+            <button id="btn-admin-login" class="btn">Log in</button>
+            <button id="btn-admin-logout" class="btn">Log out</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold">All Petitions</h3>
+          <div class="text-xs opacity-75">Click a row to edit</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="table" id="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Goal</th>
+                <th>Sigs</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card p-6" id="editor" style="display:none;">
+        <h3 class="font-semibold mb-2">Edit Petition</h3>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="label">Title</label>
+            <input id="ed-title" class="input" />
+          </div>
+          <div>
+            <label class="label">Category</label>
+            <select id="ed-category" class="input">
+              <option>Academics</option>
+              <option>Student Life</option>
+              <option>Facilities</option>
+              <option>Policy</option>
+              <option>Dining</option>
+              <option>Parking</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Goal</label>
+            <input id="ed-goal" type="number" class="input" />
+          </div>
+          <div>
+            <label class="label">Status</label>
+            <select id="ed-status" class="input">
+              <option value="active">Open</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="label">Description</label>
+            <textarea id="ed-desc" rows="6" class="input"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="label">Official Response (Advisor/SGA)</label>
+            <textarea id="ed-response" rows="4" class="input" placeholder="Paste an official update or decision here..."></textarea>
+          </div>
+          <div class="flex items-center gap-2 md:col-span-2">
+            <label class="label">Featured</label>
+            <input id="ed-featured" type="checkbox" class="rounded" />
+            <span class="text-xs opacity-75">Show as highlighted on home</span>
+          </div>
+          <div class="md:col-span-2 flex gap-2">
+            <button id="ed-save" class="btn btn-primary">Save changes</button>
+            <button id="ed-view" class="btn">View</button>
+            <button id="ed-delete" class="btn text-red-600 border-red-300 hover:border-red-400">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold">Settings</h3>
+          <div class="text-xs opacity-75">Control sign-in & anti-duplicate rules</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="label">Allowed email domain (optional)</label>
+            <input id="set-domain" class="input" placeholder="e.g. niagaracc.suny.edu" />
+          </div>
+          <label class="flex items-center gap-2 mt-6"><input id="set-enforce-domain" type="checkbox"/> <span class="text-sm">Require this domain to sign</span></label>
+          <label class="flex items-center gap-2"><input id="set-unique-email" type="checkbox" checked/> <span class="text-sm">Block duplicate signatures by email</span></label>
+        </div>
+        <div class="mt-3 flex gap-2">
+          <button id="settings-save" class="btn btn-primary">Save settings</button>
+          <button id="settings-reset" class="btn">Reset to defaults</button>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold">Data & Tools</h3>
+          <div class="text-xs opacity-75">Export/import works here too</div>
+        </div>
+        <div class="flex gap-2 mb-3">
+          <button id="admin-export" class="btn">Export JSON</button>
+          <label class="btn btn-ghost cursor-pointer">Import JSON
+            <input id="admin-import" type="file" accept="application/json" class="hidden" />
+          </label>
+          <button id="admin-clear" class="btn text-red-600 border-red-300 hover:border-red-400">Clear ALL</button>
+        </div>
+        <pre id="admin-json" class="text-xs bg-white rounded-xl border p-3 overflow-auto" style="max-height:300px; border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18)"></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t" style="border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .20)">
+    <div class="mx-auto container-narrow px-4 py-6 flex items-center justify-between text-xs opacity-75">
+      <div>© <span id="year"></span> SUNY Niagara SGA • Student Petitions</div>
+      <div class="flex items-center gap-3">
+        <a href="#/create" class="btn btn-ghost">Start a petition</a>
+        <a href="#/browse" class="btn btn-ghost">Browse</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Card Template (PawPrints-style stats row) -->
+  <template id="tpl-card">
+    <article class="card p-5 flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="text-lg font-bold"></h3>
+        <span class="badge"></span>
+      </div>
+      <p class="text-sm opacity-90 line-clamp-3"></p>
+      <div class="w-full rounded-full h-2 overflow-hidden" style="background: rgba(var(--lt-r), var(--lt-g), var(--lt-b), .25)">
+        <div class="h-2 rounded-full" style="background: var(--gold); width:0%"></div>
+      </div>
+      <div class="flex items-center justify-between text-xs opacity-75">
+        <div><span class="sig-count">0</span>/<span class="goal">0</span> signatures</div>
+        <div class="flex items-center gap-2">
+          <span class="age"></span>
+          <span class="pill">🐺 ThunderWolves</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <a class="btn btn-primary view">View & sign</a>
+        <button class="btn manage text-red-600 border-red-300 hover:border-red-400">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <!-- User Sign-in Modal -->
+  <div id="user-modal" class="backdrop">
+    <div class="modal">
+      <h3 class="text-lg font-bold mb-2">Sign in</h3>
+      <p class="text-sm opacity-80 mb-3">This stores your info <strong>only on this device</strong> so you don’t sign twice.</p>
+      <div class="grid gap-3">
+        <input id="user-name" class="input" placeholder="Full name"/>
+        <input id="user-email" class="input" type="email" placeholder="Email"/>
+        <label class="flex items-center gap-2 text-sm"><input id="user-affil" type="checkbox"> I’m a SUNY Niagara student</label>
+        <div class="flex gap-2 justify-end">
+          <button id="user-cancel" class="btn">Cancel</button>
+          <button id="user-save" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div id="admin-modal" class="backdrop">
+    <div class="modal">
+      <h3 class="text-lg font-bold mb-2">Admin/Advisor Login</h3>
+      <div class="grid gap-2">
+        <select id="admin-role" class="input">
+          <option value="admin">Admin (SGA)</option>
+          <option value="advisor">Advisor</option>
+        </select>
+        <input id="admin-code" class="input" type="password" placeholder="Passcode"/>
+        <div class="flex gap-2 justify-end mt-1">
+          <button id="admin-cancel" class="btn">Cancel</button>
+          <button id="admin-ok" class="btn btn-primary">Log in</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================================
+    // Utilities
+    // ================================
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const timeAgo = ts => { const s=Math.floor((Date.now()-ts)/1000); const m=(s/60)|0, h=(m/60)|0, d=(h/24)|0; return d?d+"d ago":h?h+"h ago":m?m+"m ago":"just now"; };
+
+    // ================================
+    // Data Layer (localStorage)
+    // ================================
+    const DB_KEY = 'nccc_petitions_v1';
+    const ROLE_KEY = 'nccc_role_v1';
+    const USER_KEY = 'nccc_user_v1';
+    const SETTINGS_KEY = 'nccc_settings_v1';
+
+    const readDB = () => JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    const writeDB = (rows) => localStorage.setItem(DB_KEY, JSON.stringify(rows));
+    const getRole = () => localStorage.getItem(ROLE_KEY) || 'guest';
+    const setRole = (r) => localStorage.setItem(ROLE_KEY, r);
+    const getUser = () => JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+    const setUser = (u) => localStorage.setItem(USER_KEY, JSON.stringify(u));
+    const getSettings = () => JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{"domain":"","enforceDomain":false,"uniqueByEmail":true}');
+    const setSettings = (s) => localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+
+    // ================================
+    // Seed Demo Data
+    // ================================
+    function seedDemo(){
+      if (readDB().length) return;
+      const now = Date.now();
+      const sample = [
+        { id: uid(), title:'Extend Library Hours During Finals', category:'Academics', description:'To support NCCC students during exam season, extend library hours to 2am for the two weeks of finals. Peer colleges report better outcomes; staff can include work-study shifts.', goal:50, createdAt: now-1000*60*60*24*3, signatures:[ {id:uid(),name:'Alex G.',email:'alex@example.com',comment:'Huge yes!',ts:now-1000*60*60*20}, {id:uid(),name:'Priya S.',email:'priya@example.com',comment:'',ts:now-1000*60*60*10} ], status:'active', featured:true, officialResponse:'' },
+        { id: uid(), title:'Publish Winter Plowing & Parking Plan', category:'Parking', description:'Post a predictable snow-plowing schedule and designate overflow areas during storms to reduce tickets/tows. Provide SMS/email alerts for overnight storms.', goal:50, createdAt: now-1000*60*60*24*7, signatures:[ {id:uid(),name:'Jordan L.',email:'jordan@example.com',comment:'Please!',ts:now-1000*60*60*2} ], status:'active', featured:false, officialResponse:'' },
+        { id: uid(), title:'Rotating Vegetarian & Allergen Labels', category:'Dining', description:'Add rotating vegetarian/vegan entrees and clear allergen labels across dining venues. Students with dietary needs require reliable options.', goal:50, createdAt: now-1000*60*60*24*10, signatures:[], status:'active', featured:false, officialResponse:'' }
+      ];
+      writeDB(sample);
+    }
+
+    // ================================
+    // Router & View handling
+    // ================================
+    const routes=['home','browse','create','detail','admin'];
+    function show(view){
+      routes.forEach(r=> $('#view-'+r)?.classList.add('hidden'));
+      $('#view-'+view)?.classList.remove('hidden');
+      // nav highlight
+      $$('a[data-nav]').forEach(a=>{
+        const is = a.getAttribute('data-nav')===view || (view==='home' && a.getAttribute('data-nav')==='home');
+        a.classList.toggle('nav-active', is);
+      });
+      // header user button
+      const u = getUser();
+      $('#btn-user').textContent = u? (u.name || u.email || 'Profile') : 'Sign in';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function navigate(){
+      const hash = location.hash.replace('#/','');
+      if (!hash){ refreshHome(); show('home'); return; }
+      if (hash.startsWith('create')) { show('create'); return; }
+      if (hash.startsWith('browse')) { refreshBrowse(); show('browse'); return; }
+      if (hash.startsWith('petition/')) { openDetail(hash.split('/')[1]); return; }
+      if (hash.startsWith('admin')) { showAdmin(); return; }
+      refreshHome(); show('home');
+    }
+    window.addEventListener('hashchange', navigate);
+
+    // ================================
+    // Home View
+    // ================================
+    function refreshHome(){
+      const rows = readDB();
+      const activeCat = $('#home-chips .is-active')?.getAttribute('data-cat') || '';
+      const activeStatus = $('#home-status .is-active')?.getAttribute('data-status') || 'active';
+      const sort = $('#home-sort')?.value || 'trending';
+      const showFeatured = $('#toggle-featured')?.checked;
+      const q = $('#home-search')?.value?.toLowerCase() || '';
+      let list = rows;
+      if (activeStatus==='active') list = list.filter(p=> p.status!=='archived'); else list = list.filter(p=> p.status==='archived');
+      if (activeCat) list = list.filter(p=> p.category===activeCat);
+      if (q) list = list.filter(p=> (p.title+p.description+p.category).toLowerCase().includes(q));
+      if (sort==='newest') list.sort((a,b)=> b.createdAt-a.createdAt);
+      else if (sort==='signatures') list.sort((a,b)=> b.signatures.length-a.signatures.length);
+      else list.sort((a,b)=> (b.signatures.length/b.goal) - (a.signatures.length/a.goal));
+      if (showFeatured) list.sort((a,b)=> (b.featured===true) - (a.featured===true));
+      $('#home-count').textContent = list.length + (list.length===1? ' result':' results');
+      const wrap = $('#home-grid');
+      wrap.innerHTML='';
+      if (!list.length){ wrap.innerHTML = '<div class="text-sm opacity-75">No petitions yet.</div>'; return; }
+      list.forEach(p=> wrap.appendChild(renderCard(p)) );
+    }
+    window.addEventListener('input', (e)=>{ if(e.target && (e.target.id==='home-search' || e.target.id==='home-sort' || e.target.id==='toggle-featured')){ refreshHome(); }});
+    window.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      if (chip.parentElement?.id==='home-chips') { $$('#home-chips .chip').forEach(c=> c.classList.remove('is-active')); chip.classList.add('is-active'); }
+      if (chip.parentElement?.id==='home-status') { $$('#home-status .chip').forEach(c=> c.classList.remove('is-active')); chip.classList.add('is-active'); }
+      refreshHome();
+    });
+
+    // ================================
+    // Browse View
+    // ================================
+    function refreshBrowse(){
+      const q = $('#search').value.toLowerCase();
+      const cat = $('#filter-category').value;
+      const sort = $('#sort').value;
+      let rows = readDB();
+      if (q) rows = rows.filter(p=> (p.title+p.description+p.category).toLowerCase().includes(q));
+      if (cat) rows = rows.filter(p=> p.category===cat);
+      if (sort==='newest') rows.sort((a,b)=> b.createdAt-a.createdAt);
+      else if (sort==='signatures') rows.sort((a,b)=> b.signatures.length-a.signatures.length);
+      else rows.sort((a,b)=> (b.signatures.length/b.goal) - (a.signatures.length/a.goal));
+      const list = $('#browse-list'); list.innerHTML=''; rows.forEach(p=> list.appendChild(renderCard(p)) );
+    }
+    $('#search')?.addEventListener('input', refreshBrowse);
+    $('#filter-category')?.addEventListener('change', refreshBrowse);
+    $('#sort')?.addEventListener('change', refreshBrowse);
+
+    // ================================
+    // Export/Import/Seed/Clear
+    // ================================
+    $('#export')?.addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(readDB(), null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='suny-niagara-petitions.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    $('#import')?.addEventListener('change', (e)=>{
+      const file = e.target.files[0]; if(!file) return; const r=new FileReader();
+      r.onload = ()=>{ try{ const data=JSON.parse(r.result); if(Array.isArray(data)){ writeDB(data); toast('Imported '+data.length+' petitions.'); navigate(); refreshHome(); } } catch{ toast('Invalid file.'); } };
+      r.readAsText(file);
+    });
+    $('#seed')?.addEventListener('click', ()=>{ seedDemo(); toast('Demo data loaded.'); navigate(); refreshHome(); });
+    $('#clear')?.addEventListener('click', ()=>{ if(confirm('Delete ALL petitions?')){ writeDB([]); toast('All petitions cleared.'); navigate(); refreshHome(); } });
+
+    // ================================
+    // Card Renderer
+    // ================================
+    function renderCard(p){
+      const t = $('#tpl-card').content.cloneNode(true);
+      const card = t.querySelector('article');
+      card.querySelector('h3').textContent = p.title;
+      card.querySelector('.badge').textContent = p.category + (p.featured ? ' • Featured' : '');
+      card.querySelector('p').textContent = p.description;
+      const pct = Math.min(100, Math.round((p.signatures.length / Math.max(1,p.goal))*100));
+      card.querySelector('.goal').textContent = p.goal;
+      card.querySelector('.sig-count').textContent = p.signatures.length;
+      card.querySelector('.age').textContent = timeAgo(p.createdAt);
+      card.querySelector('.w-full .h-2').style.width = pct+'%';
+      card.querySelector('.view').addEventListener('click', ()=> location.hash = '#/petition/'+p.id );
+      card.querySelector('.manage').addEventListener('click', ()=>{ if(confirm('Delete this petition?')) { delPetition(p.id); toast('Deleted.'); navigate(); refreshHome(); } });
+      return card;
+    }
+    function delPetition(id){ writeDB(readDB().filter(x=>x.id!==id)); }
+
+    // ================================
+    // Create Petition
+    // ================================
+    $('#create-form')?.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const title = $('#title').value.trim();
+      const description = $('#description').value.trim();
+      const category = $('#category').value;
+      const goal = Math.max(1, parseInt($('#goal').value,10)||1);
+      if(!title||!description||!category) return toast('Please fill in all fields.');
+      const rows = readDB();
+      const p = { id: uid(), title, description, category, goal, createdAt: Date.now(), signatures: [], status:'active', featured:false, officialResponse:'' };
+      rows.unshift(p); writeDB(rows);
+      location.hash = '#/petition/'+p.id;
+      $('#create-form').reset();
+      toast('Petition created.');
+    });
+
+    // ================================
+    // Detail View + Signing rules
+    // ================================
+    function openDetail(id){
+      const p = readDB().find(x=>x.id===id);
+      if(!p){ toast('Petition not found.'); location.hash = '#/browse'; return; }
+      const settings = getSettings();
+      const el = $('#view-detail');
+      el.innerHTML = `
+        <div class="card p-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="badge">${p.category}</div>
+              <h2 class="text-2xl font-extrabold mt-2">${p.title}</h2>
+              <p class="text-sm opacity-75">Created ${timeAgo(p.createdAt)} • Goal ${p.goal} (Response at 50)</p>
+            </div>
+            <button class="btn text-red-600 border-red-300 hover:border-red-400" id="delete-one">Delete</button>
+          </div>
+
+          <p class="mt-4 opacity-90 whitespace-pre-line">${p.description}</p>
+
+          <div class="mt-6">
+            <div class="w-full rounded-full h-3 overflow-hidden" style="background: rgba(var(--lt-r), var(--lt-g), var(--lt-b), .25)">
+              <div class="h-3 rounded-full" style="background: var(--gold); width:${Math.min(100, Math.round((p.signatures.length/Math.max(1,p.goal))*100))}%"></div>
+            </div>
+            <div class="mt-2 text-sm opacity-80"><strong>${p.signatures.length}</strong> of <strong>${p.goal}</strong> signatures</div>
+          </div>
+
+          ${p.officialResponse ? `<div class="mt-6 rounded-xl border p-4" style="border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18); background: #fffef7">
+            <h3 class="text-sm font-semibold mb-1">Official Response</h3>
+            <p class="text-sm">${p.officialResponse}</p>
+          </div>` : ''}
+
+          <form id="sign-form" class="mt-6 grid md:grid-cols-3 gap-3">
+            <input id="sign-name" class="input" placeholder="Full name" required />
+            <input id="sign-email" type="email" class="input" placeholder="Email${settings.enforceDomain&&settings.domain?` (@${settings.domain})`:''}" required />
+            <input id="sign-comment" class="input md:col-span-3" placeholder="Optional comment" />
+            <label class="md:col-span-3 text-xs opacity-80 flex items-center gap-2"><input id="honor" type="checkbox"/> I affirm I am a real person and I’m signing once.</label>
+            <button class="btn btn-primary md:col-span-3" type="submit">Add your signature</button>
+          </form>
+
+          <div class="mt-6">
+            <h3 class="text-sm font-semibold mb-2">Recent signatures</h3>
+            <div id="sigs" class="grid gap-2"></div>
+          </div>
+        </div>
+      `;
+      show('detail');
+      $('#delete-one').addEventListener('click', ()=>{ if(confirm('Delete this petition?')) { delPetition(p.id); location.hash = '#/browse'; toast('Deleted.'); }});
+      const sigWrap = $('#sigs');
+      sigWrap.innerHTML = p.signatures.slice().reverse().map(s=> `
+        <div class="rounded-xl border px-3 py-2 text-sm flex items-center justify-between" style="border-color: rgba(var(--blue-r), var(--blue-g), var(--blue-b), .18); background: #fafafa;">
+          <div class="font-medium">${s.name}</div>
+          <div class="text-xs opacity-75">${timeAgo(s.ts)}</div>
+        </div>
+      `).join('') || '<p class="text-sm opacity-75">No signatures yet. Be the first!</p>';
+
+      // Prefill from user profile
+      const u = getUser();
+      if (u){ $('#sign-name').value = u.name || ''; $('#sign-email').value = u.email || ''; }
+
+      $('#sign-form').addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name = $('#sign-name').value.trim();
+        const email = $('#sign-email').value.trim().toLowerCase();
+        const comment = $('#sign-comment').value.trim();
+        if(!name||!email) return toast('Please add your name and email.');
+        if(!$('#honor').checked) return toast('Please check the honesty box.');
+        if(settings.enforceDomain && settings.domain){
+          if(!email.endsWith('@'+settings.domain)) return toast('Email must be @'+settings.domain);
+        }
+        if(settings.uniqueByEmail && p.signatures.some(s=> s.email.toLowerCase()===email)){
+          return toast('This email already signed.');
+        }
+        const rows = readDB();
+        const idx = rows.findIndex(x=>x.id===p.id); if(idx<0) return;
+        rows[idx].signatures.push({ id: uid(), name, email, comment, ts: Date.now() });
+        writeDB(rows);
+        setUser({name, email}); // remember profile
+        openDetail(p.id);
+        toast('Thanks for signing!');
+      });
+    }
+
+    // ================================
+    // Admin Panel (front-end only; not secure)
+    // ================================
+    const ADMIN_PASSCODE = 'thunderwolves';
+    const ADVISOR_PASSCODE = 'advisor';
+
+    function showAdmin(){
+      if (getRole()==='guest') openAdminModal();
+      $('#role-chip').textContent = 'Role: ' + getRole();
+      refreshAdmin();
+      show('admin');
+    }
+
+    function refreshAdmin(){
+      const tbody = $('#admin-table tbody');
+      const rows = readDB();
+      tbody.innerHTML = '';
+      rows.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.title}</td>
+          <td>${p.category}</td>
+          <td>${p.goal}</td>
+          <td>${p.signatures.length}</td>
+          <td>${p.status}</td>
+          <td>${p.featured? 'Yes':'No'}</td>
+          <td><button class="btn btn-ghost btn-sm">Edit</button></td>
+        `;
+        tr.querySelector('button').addEventListener('click', ()=> openEditor(p.id));
+        tbody.appendChild(tr);
+      });
+      $('#admin-json').textContent = JSON.stringify(rows, null, 2);
+
+      // settings panel
+      const s = getSettings();
+      $('#set-domain').value = s.domain || '';
+      $('#set-enforce-domain').checked = !!s.enforceDomain;
+      $('#set-unique-email').checked = s.uniqueByEmail!==false;
+    }
+
+    function openEditor(id){
+      const rows = readDB();
+      const p = rows.find(x=>x.id===id); if(!p) return;
+      $('#editor').style.display = 'block';
+      $('#ed-title').value = p.title;
+      $('#ed-category').value = p.category;
+      $('#ed-goal').value = p.goal;
+      $('#ed-status').value = p.status;
+      $('#ed-desc').value = p.description;
+      $('#ed-response').value = p.officialResponse||'';
+      $('#ed-featured').checked = !!p.featured;
+      $('#ed-save').onclick = ()=>{
+        const role = getRole();
+        if(role==='guest'){ toast('Log in first.'); return; }
+        p.title = $('#ed-title').value.trim();
+        p.category = $('#ed-category').value;
+        p.goal = Math.max(1, parseInt($('#ed-goal').value,10)||1);
+        p.status = $('#ed-status').value;
+        p.description = $('#ed-desc').value.trim();
+        if(role==='admin' || role==='advisor') p.officialResponse = $('#ed-response').value.trim();
+        if(role==='admin') p.featured = $('#ed-featured').checked; // only admin can feature
+        writeDB(rows);
+        toast('Saved.');
+        refreshAdmin();
+      };
+      $('#ed-view').onclick = ()=>{ location.hash = '#/petition/'+p.id; };
+      $('#ed-delete').onclick = ()=>{
+        const role = getRole();
+        if(role!=='admin'){ toast('Only admin can delete.'); return; }
+        if(confirm('Delete this petition?')){
+          writeDB(rows.filter(x=>x.id!==p.id));
+          $('#editor').style.display='none';
+          toast('Deleted.');
+          refreshAdmin();
+          navigate();
+        }
+      };
+    }
+
+    // Admin login modal UX
+    function openAdminModal(){ $('#admin-modal').style.display='flex'; $('#admin-code').value=''; }
+    function closeAdminModal(){ $('#admin-modal').style.display='none'; }
+    $('#btn-admin-login')?.addEventListener('click', openAdminModal);
+    $('#admin-cancel')?.addEventListener('click', closeAdminModal);
+    $('#admin-ok')?.addEventListener('click', ()=>{
+      const role = $('#admin-role').value;
+      const code = $('#admin-code').value.trim();
+      if(role==='admin' && code===ADMIN_PASSCODE){ setRole('admin'); toast('Logged in as admin'); closeAdminModal(); refreshAdmin(); }
+      else if(role==='advisor' && code===ADVISOR_PASSCODE){ setRole('advisor'); toast('Logged in as advisor'); closeAdminModal(); refreshAdmin(); }
+      else { toast('Incorrect passcode.'); }
+      $('#role-chip').textContent = 'Role: ' + getRole();
+    });
+    $('#btn-admin-logout')?.addEventListener('click', ()=>{ setRole('guest'); toast('Logged out.'); $('#role-chip').textContent='Role: guest'; });
+
+    // Settings save/reset
+    $('#settings-save')?.addEventListener('click', ()=>{
+      if(getRole()==='guest'){ toast('Log in first.'); return; }
+      const s = { domain: $('#set-domain').value.trim(), enforceDomain: $('#set-enforce-domain').checked, uniqueByEmail: $('#set-unique-email').checked };
+      setSettings(s); toast('Settings saved.');
+    });
+    $('#settings-reset')?.addEventListener('click', ()=>{ setSettings({domain:'', enforceDomain:false, uniqueByEmail:true}); refreshAdmin(); toast('Settings reset.'); });
+
+    // ================================
+    // User sign-in modal
+    // ================================
+    function openUserModal(){ const u=getUser(); $('#user-name').value=u?.na
